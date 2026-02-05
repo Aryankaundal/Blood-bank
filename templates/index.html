@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B.B</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+  <style>
+    .flash-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right:0;
+  
+  background-color: #e6f7ec;
+  color: #116930;
+  border: 1px solid #b7e4c7;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.05rem;
+
+  z-index: 9999;
+
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero {
+  animation: heroEnter 0.8s ease-out;
+}
+@keyframes textFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero h1 {
+  animation: textFade 0.7s ease forwards;
+}
+
+.hero .subtitle {
+  opacity: 0;
+  animation: textFade 0.7s ease forwards;
+  animation-delay: 0.2s;
+}
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(198, 40, 40, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(198, 40, 40, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(198, 40, 40, 0);
+  }
+}
+
+.cta {
+  animation: pulse 2.2s infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.cta:active {
+  transform: scale(0.96);
+}
+
+
+  </style>
+</head>
+
+<body>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="flash-message">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <header class="hero">
+    <div class="hero-content">
+      <h1>
+        Everyone Could <br />
+        Be a Hero ♥️
+      </h1>
+
+      <p class="subtitle">
+        Saving lives, spreading smiles<br />
+        Starve the mosquitoes.<br />
+        Give your blood to someone who needs it.
+      </p>
+
+      <!-- LOGIN -->
+      <div class="hero-buttons">
+
+  {% if user.is_authenticated %}
+    <!-- Logged-in user -->
+    <button class="cta"
+            onclick="window.location.href='{% url 'add_donor' %}'">
+      FILL DETAILS
+    </button>
+
+    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit"
+          class="cta"
+          style="background:#198754; margin-left:10px;">
+    LOGOUT
+  </button>
+</form>
+
+
+  {% else %}
+    <!-- Guest user -->
+    <button class="cta"
+            onclick="window.location.href='{% url 'login' %}'">
+      LOGIN
+    </button>
+
+    <button class="cta"
+            style="background:#198754; margin-left:10px;"
+            onclick="window.location.href='{% url 'signup' %}'">
+      SIGN UP
+    </button>
+  {% endif %}
+
+</div>
+
+
+    </div>
+  </header>
+
+  <!-- JS AFTER CONTENT -->
+  <script>
+    setTimeout(() => {
+      const msg = document.querySelector('.flash-message');
+      if (msg) {
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(-10px)';
+        setTimeout(() => msg.remove(), 600);
+      }
+    }, 3000);
+  </script>
+
+</body>
+</html>
