@@ -114,11 +114,9 @@
         Give your blood to someone who needs it.
       </p>
 
-      <!-- LOGIN -->
       <div class="hero-buttons">
 
   {% if user.is_authenticated %}
-    <!-- Logged-in user -->
     <button class="cta"
             onclick="window.location.href='{% url 'add_donor' %}'">
       FILL DETAILS
@@ -135,7 +133,6 @@
 
 
   {% else %}
-    <!-- Guest user -->
     <button class="cta"
             onclick="window.location.href='{% url 'login' %}'">
       LOGIN
@@ -153,8 +150,6 @@
 
     </div>
   </header>
-
-  <!-- JS AFTER CONTENT -->
   <script>
     setTimeout(() => {
       const msg = document.querySelector('.flash-message');

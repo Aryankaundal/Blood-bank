@@ -6,7 +6,6 @@
     <title>Available Blood Donors</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -21,14 +20,12 @@
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         }
 
-        /* Page container */
         .page-container {
             max-width: 1200px;
             margin: 2.5rem auto;
             padding: 0 1rem;
         }
 
-        /* Header */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -40,10 +37,8 @@
             font-size: 2.6rem;
             font-weight: 800;
             color: #c62828;
-            margin: 0;
         }
 
-        /* Filter box */
         .filter-box {
             background: #ffffff;
             padding: 1.2rem;
@@ -52,7 +47,6 @@
             margin-bottom: 1.6rem;
         }
 
-        /* Table wrapper */
         .table-wrapper {
             background: #ffffff;
             padding: 1.2rem;
@@ -60,52 +54,13 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
         }
 
-        table {
-            margin-bottom: 0;
-        }
-
-        thead {
-            background-color: #e3f2fd;
-        }
-
-        th {
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        td {
-            vertical-align: middle;
-        }
-
-        /* Action buttons */
-        .btn-warning,
-        .btn-danger {
-            font-size: 0.8rem;
-            padding: 0.3rem 0.65rem;
-            border-radius: 6px;
-        }
-
-        /* Footer */
         .donor-footer {
             text-align: center;
             color: #555;
             font-style: italic;
-            font-size: 1.05rem;
             border-top: 1px solid #e0e0e0;
             margin-top: 3rem;
             padding-top: 1.8rem;
-        }
-
-        @media (max-width: 768px) {
-            h2 {
-                font-size: 2rem;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
         }
     </style>
 </head>
@@ -114,38 +69,46 @@
 
 <div class="page-container">
 
-    <!-- HEADER -->
     <div class="page-header">
         <h2>Available Blood Donors</h2>
 
         <form method="POST" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-outline-danger btn-sm">
-                Logout
-            </button>
+            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
         </form>
     </div>
+    <form method="GET" class="filter-box">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <select name="blood_group" class="form-select">
+                <option value="">All Blood Groups</option>
+                <option value="A+" {% if blood_group == "A+" %}selected{% endif %}>A+</option>
+                <option value="A-" {% if blood_group == "A-" %}selected{% endif %}>A-</option>
+                <option value="B+" {% if blood_group == "B+" %}selected{% endif %}>B+</option>
+                <option value="B-" {% if blood_group == "B-" %}selected{% endif %}>B-</option>
+                <option value="O+" {% if blood_group == "O+" %}selected{% endif %}>O+</option>
+                <option value="O-" {% if blood_group == "O-" %}selected{% endif %}>O-</option>
+                <option value="AB+" {% if blood_group == "AB+" %}selected{% endif %}>AB+</option>
+                <option value="AB-" {% if blood_group == "AB-" %}selected{% endif %}>AB-</option>
+            </select>
+        </div>
 
-    <!-- FILTERS -->
-    <div class="filter-box">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <select id="blood_group" class="form-select">
-                    <option value="">All Blood Groups</option>
-                    <option>A+</option><option>A-</option>
-                    <option>B+</option><option>B-</option>
-                    <option>O+</option><option>O-</option>
-                    <option>AB+</option><option>AB-</option>
-                </select>
-            </div>
+        <div class="col-md-4">
+            <input type="text"
+                   name="area"
+                   class="form-control"
+                   placeholder="Search by area"
+                   value="{{ area }}">
+        </div>
 
-            <div class="col-md-4">
-                <input type="text" id="area" class="form-control" placeholder="Search by area">
-            </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-danger w-100">
+                Search
+            </button>
         </div>
     </div>
+</form>
 
-    <!-- TABLE -->
     <div class="table-wrapper">
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
@@ -161,44 +124,57 @@
                     </tr>
                 </thead>
                 <tbody id="donor-table">
-                    {% include 'partials/donor_rows.html' %}
-                </tbody>
+                    {% for donor in page_obj %}
+                        <tr>
+                        <td>{{ donor.name }}</td>
+                        <td>{{ donor.blood_group }}</td>
+                        <td>{{ donor.gender }}</td>
+                        <td>{{ donor.age }}</td>
+                        <td>{{ donor.mobile }}</td>
+                        <td>{{ donor.area }}</td>
+                        <td>
+                            <a href="/donors/edit/{{ donor.id }}/" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="/donors/delete/{{ donor.id }}/"
+                            class="btn btn-sm btn-danger"
+                            onclick="return confirm('Are you sure?');">
+                            Delete
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                <tr>
+                <td colspan="7" class="text-center">No donors found</td>
+            </tr>
+{% endfor %}
+  </tbody>
             </table>
         </div>
+<div class="d-flex justify-content-between align-items-center mt-4">
+
+    <span class="text-muted">
+        Showing page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    <div>
+        {% if page_obj.has_previous %}
+        <a class="btn btn-outline-secondary btn-sm"
+           href="?page={{ page_obj.previous_page_number }}&blood_group={{ blood_group }}&area={{ area }}">
+           Back
+        </a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+        <a class="btn btn-outline-secondary btn-sm"
+           href="?page={{ page_obj.next_page_number }}&blood_group={{ blood_group }}&area={{ area }}">
+           Forward
+        </a>
+        {% endif %}
     </div>
-
 </div>
-
+    </div>
+</div>
 <footer class="donor-footer">
-    <p>
-        “A single drop of blood can save a life. Be someone’s hero today.”
-    </p>
+    <p>“A single drop of blood can save a life.”</p>
 </footer>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-<script>
-    $(document).ready(function () {
-
-        function fetchDonors() {
-            $.ajax({
-                url: "/donors/search/",
-                data: {
-                    blood_group: $("#blood_group").val(),
-                    area: $("#area").val()
-                },
-                success: function (response) {
-                    $("#donor-table").html(response.html);
-                }
-            });
-        }
-
-        $("#blood_group").change(fetchDonors);
-        $("#area").keyup(fetchDonors);
-
-    });
-</script>
-
 </body>
 </html>

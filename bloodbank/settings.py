@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0n=c$-0)^!iw0%eiy(04bqrgzze2+nq^e$ebp#95!&f6r6hv%x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [".onrender.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -133,4 +133,5 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'add_donor'
 LOGOUT_REDIRECT_URL = 'home'
+ADMIN_SITE_HEADER = "Blood Bank Admin"
 
