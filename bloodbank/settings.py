@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-0n=c$-0)^!iw0%eiy(04bqrgzze2+nq^e$ebp#95!&f6r6hv%x
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://blood-bank-6ko0.onrender.com",
+]
 
 # Application definition
 
